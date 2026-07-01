@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NetSage AI — Predictive, Offline-First Network Intelligence Dashboard for Mission-Critical Infrastructure" />
+  <title>NetSage AI — Network Intelligence Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">N</div>
+      <div class="brand-text">
+        <span class="brand-name">NETSAGE AI</span>
+        <span class="brand-tagline">Network Intelligence</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item active" data-view="dashboard" href="#/dashboard">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-item" data-view="network-map" href="#/network-map">
+        <span class="nav-icon">🌐</span>
+        <span>Network Map</span>
+      </a>
+      <a class="nav-item" data-view="ai-assistant" href="#/ai-assistant">
+        <span class="nav-icon">🤖</span>
+        <span>AI Assistant</span>
+        <span class="nav-badge">3</span>
+      </a>
+      <a class="nav-item" data-view="incidents" href="#/incidents">
+        <span class="nav-icon">⚠️</span>
+        <span>Incidents</span>
+        <span class="nav-badge">5</span>
+      </a>
+
+      <div class="nav-section-label">Analysis</div>
+      <a class="nav-item" data-view="predictions" href="#/predictions">
+        <span class="nav-icon">🔮</span>
+        <span>Predictions</span>
+      </a>
+      <a class="nav-item" data-view="telemetry" href="#/telemetry">
+        <span class="nav-icon">📈</span>
+        <span>Telemetry</span>
+      </a>
+      <a class="nav-item" data-view="device-risk" href="#/device-risk">
+        <span class="nav-icon">🛡️</span>
+        <span>Device Risk</span>
+      </a>
+      <a class="nav-item" data-view="digital-twin" href="#/digital-twin">
+        <span class="nav-icon">🧬</span>
+        <span>Digital Twin</span>
+      </a>
+
+      <div class="nav-section-label">System</div>
+      <a class="nav-item" data-view="reports" href="#/reports">
+        <span class="nav-icon">📋</span>
+        <span>Reports</span>
+      </a>
+      <a class="nav-item" data-view="settings" href="#/settings">
+        <span class="nav-icon">⚙️</span>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span>Air-Gapped · Secure</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+
+    <!-- ── Top Bar ── -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div>
+          <div class="topbar-title" id="page-title">Mission Control Dashboard</div>
+          <div class="topbar-subtitle" id="page-subtitle">ISRO Network Infrastructure · Real-time Monitoring</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-badge badge-airgap">
+          <span>🔒</span>
+          <span>Air-Gapped</span>
+        </div>
+        <div class="topbar-clock" id="live-clock">--:--:--</div>
+        <button class="topbar-btn" id="btn-notifications" title="Notifications">
+          🔔
+          <span class="notif-dot"></span>
+        </button>
+        <button class="topbar-btn" id="btn-fullscreen" title="Fullscreen">⛶</button>
+      </div>
+    </header>
+
+    <!-- ═══════════ VIEW CONTAINER ═══════════ -->
+    <div class="view-container" id="view-container">
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- VIEW 1: DASHBOARD                     -->
+      <!-- ══════════════════════════════════════ -->
+      <section class="view active" id="view-dashboard">
+        <div class="dashboard">
+          <!-- KPI Row -->
+          <div class="kpi-row" id="kpi-row">
+            <div class="kpi-card accent-cyan">
+              <div class="kpi-top"><span class="kpi-label">Active Devices</span><div class="kpi-icon">🖥️</div></div>
+              <div class="kpi-value">347<span style="font-size:14px;color:var(--text-muted)">/350</span></div>
+              <div class="kpi-sub"><span class="kpi-trend up">↑ 3</span><span>since last hour</span></div>
+              <div class="kpi-sparkline"><canvas id="spark-devices"></canvas></div>
+            </div>
+            <div class="kpi-card accent-green">
+              <div class="kpi-top"><span class="kpi-label">Network Health</span><div class="kpi-icon">💚</div></div>
+              <div class="kpi-value" id="kpi-health">94.2<span style="font-size:16px;color:var(--green)">%</span></div>
+              <div class="kpi-sub"><span class="kpi-trend up">↑ 1.3%</span><span>improvement</span></div>
+              <div class="kpi-sparkline"><canvas id="spark-health"></canvas></div>
+            </div>
+            <div class="kpi-card accent-magenta">
+              <div class="kpi-top"><span class="kpi-label">Active Alerts</span><div class="kpi-icon">🚨</div></div>
+              <div class="kpi-value" id="kpi-alerts">12</div>
+              <div class="kpi-sub"><span class="kpi-trend down">↓ 4</span><span>from yesterday</span></div>
+              <div class="kpi-sparkline"><canvas id="spark-alerts"></canvas></div>
+            </div>
+            <div class="kpi-card accent-amber">
+              <div class="kpi-top"><span class="kpi-label">Avg Latency</span><div class="kpi-icon">⚡</div></div>
+              <div class="kpi-value" id="kpi-latency">23<span style="font-size:14px;color:var(--text-muted)">ms</span></div>
+              <div class="kpi-sub"><span class="kpi-trend up">↑ 2ms</span><span>vs baseline</span></div>
+              <div class="kpi-sparkline"><canvas id="spark-latency"></canvas></div>
+            </div>
+            <div class="kpi-card accent-green">
+              <div class="kpi-top"><span class="kpi-label">Uptime</span><div class="kpi-icon">⏱️</div></div>
+              <div class="kpi-value" id="kpi-uptime">99.97<span style="font-size:14px;color:var(--green)">%</span></div>
+              <div class="kpi-sub"><span class="kpi-trend up">✓</span><span>SLA compliant</span></div>
+              <div class="kpi-sparkline"><canvas id="spark-uptime"></canvas></div>
+            </div>
+            <div class="kpi-card accent-purple">
+              <div class="kpi-top"><span class="kpi-label">AI Warnings</span><div class="kpi-icon">🔮</div></div>
+              <div class="kpi-value" id="kpi-predictions">8</div>
+              <div class="kpi-sub"><span class="kpi-trend down">↓ 2</span><span>pending review</span></div>
+              <div class="kpi-sparkline"><canvas id="spark-predictions"></canvas></div>
+            </div>
+          </div>
+
+          <!-- Middle Row: Topology + Predictions -->
+          <div class="middle-row">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title"><span class="title-icon">🌐</span>Network Topology Heat Map<span class="title-dot" style="background:var(--green)"></span><span style="font-size:10px;color:var(--green);font-weight:500;letter-spacing:0">LIVE</span></div>
+                <div class="card-actions"><button class="card-action-btn" title="Zoom In">+</button><button class="card-action-btn" title="Zoom Out">−</button><button class="card-action-btn" title="Reset View">↻</button></div>
+              </div>
+              <div class="card-body"><div class="topology-container"><canvas id="topology-canvas"></canvas><div class="topology-legend"><div class="legend-item"><span class="legend-dot healthy"></span>Healthy</div><div class="legend-item"><span class="legend-dot warning"></span>Warning</div><div class="legend-item"><span class="legend-dot critical"></span>Critical</div></div></div></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title"><span class="title-icon">🔮</span>AI Failure Predictions</div><div class="card-actions"><button class="card-action-btn" title="Refresh">↻</button></div></div>
+              <div class="card-body"><div class="prediction-list" id="prediction-list"></div></div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="charts-row">
+            <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">🔥</span>CPU Usage</div></div><div class="card-body"><div class="chart-container"><canvas id="chart-cpu"></canvas></div></div></div>
+            <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">🧠</span>Memory Utilization</div></div><div class="card-body"><div class="chart-container"><canvas id="chart-memory"></canvas></div></div></div>
+            <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">📡</span>Packet Loss Rate</div></div><div class="card-body"><div class="chart-container"><canvas id="chart-packetloss"></canvas></div></div></div>
+            <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">⚡</span>Latency Distribution</div></div><div class="card-body"><div class="chart-container"><canvas id="chart-latency"></canvas></div></div></div>
+          </div>
+
+          <!-- Bottom Row -->
+          <div class="bottom-row">
+            <div class="card">
+              <div class="card-header"><div class="card-title"><span class="title-icon">🤖</span>Offline AI Assistant<span style="font-size:9px;padding:2px 8px;background:var(--green-dim);color:var(--green);border-radius:4px;font-weight:600;letter-spacing:0.5px">OFFLINE</span></div></div>
+              <div class="card-body"><div class="chat-container"><div class="chat-messages" id="chat-messages"></div><div class="chat-input-area"><input type="text" class="chat-input" id="chat-input" placeholder="Ask NetSage AI anything..." /><button class="chat-send-btn" id="chat-send" title="Send">➤</button></div></div></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title"><span class="title-icon">📋</span>Incident Timeline</div><div class="card-actions"><button class="card-action-btn" title="Filter">⫶</button></div></div>
+              <div class="card-body"><div class="timeline-container" id="incident-timeline"></div></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title"><span class="title-icon">🛡️</span>Device Risk Assessment</div><div class="card-actions"><button class="card-action-btn" title="Export CSV">↓</button><button class="card-action-btn" title="Sort">⇅</button></div></div>
+              <div class="card-body"><div class="risk-table-container"><table class="risk-table" id="risk-table"><thead><tr><th>Device</th><th>Location</th><th>Risk Score</th><th>Status</th><th>CPU</th><th>Mem</th></tr></thead><tbody id="risk-table-body"></tbody></table></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- VIEW 2: NETWORK MAP                   -->
+      <!-- ══════════════════════════════════════ -->
+      <section class="view" id="view-network-map">
+        <div class="page-content">
+          <!-- Controls bar -->
+          <div class="page-toolbar">
+            <div class="toolbar-left">
+              <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="netmap-search" class="search-input" placeholder="Search devices by name or location..." />
+              </div>
+              <div class="filter-pills" id="netmap-filters">
+                <button class="filter-pill active" data-filter="all">All</button>
+                <button class="filter-pill" data-filter="router">Routers</button>
+                <button class="filter-pill" data-filter="switch">Switches</button>
+                <button class="filter-pill" data-filter="firewall">Firewalls</button>
+                <button class="filter-pill" data-filter="server">Servers</button>
+                <button class="filter-pill" data-filter="ap">Access Points</button>
+              </div>
+            </div>
+            <div class="toolbar-right">
+              <div class="view-toggle">
+                <button class="view-toggle-btn active" data-mode="topology" title="Topology View">⬡</button>
+                <button class="view-toggle-btn" data-mode="list" title="List View">☰</button>
+              </div>
+            </div>
+          </div>
+          <!-- Map + Detail Panel -->
+          <div class="netmap-layout">
+            <div class="netmap-canvas-area card">
+              <canvas id="netmap-full-canvas"></canvas>
+              <div class="netmap-controls">
+                <button class="netmap-ctrl-btn" id="nm-zoom-in" title="Zoom In">+</button>
+                <button class="netmap-ctrl-btn" id="nm-zoom-out" title="Zoom Out">−</button>
+                <button class="netmap-ctrl-btn" id="nm-reset" title="Reset">⌂</button>
+              </div>
+              <div class="topology-legend">
+                <div class="legend-item"><span class="legend-dot healthy"></span>Healthy</div>
+                <div class="legend-item"><span class="legend-dot warning"></span>Warning</div>
+                <div class="legend-item"><span class="legend-dot critical"></span>Critical</div>
+              </div>
+            </div>
+            <div class="netmap-detail-panel card" id="netmap-detail">
+              <div class="detail-placeholder">
+                <span style="font-size:40px;">🖱️</span>
+                <h3>Select a Device</h3>
+                <p>Click on any node in the topology map to view detailed device information, health metrics, and connected devices.</p>
+              </div>
+              <div class="detail-content" id="netmap-detail-content" style="display:none;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- VIEW 3: AI ASSISTANT                  -->
+      <!-- ══════════════════════════════════════ -->
+      <section class="view" id="view-ai-assistant">
+        <div class="page-content ai-page-layout">
+          <!-- Left: Conversations sidebar -->
+          <div class="ai-sidebar card">
+            <div class="ai-sidebar-header">
+              <h3>Conversations</h3>
+              <button class="btn-icon" id="ai-new-chat" title="New Chat">✚</button>
+            </div>
+            <div class="ai-conversations-list" id="ai-conversations">
+              <div class="ai-convo-item active"><span class="convo-icon">💬</span><div class="convo-info"><span class="convo-title">Network Diagnostics</span><span class="convo-time">Active now</span></div></div>
+              <div class="ai-convo-item"><span class="convo-icon">📊</span><div class="convo-info"><span class="convo-title">Delhi Latency Analysis</span><span class="convo-time">2h ago</span></div></div>
+              <div class="ai-convo-item"><span class="convo-icon">🔧</span><div class="convo-info"><span class="convo-title">BGP Configuration Help</span><span class="convo-time">Yesterday</span></div></div>
+              <div class="ai-convo-item"><span class="convo-icon">⚠️</span><div class="convo-info"><span class="convo-title">Incident RCA — FW03</span><span class="convo-time">2 days ago</span></div></div>
+            </div>
+            <!-- Model Info -->
+            <div class="ai-model-info">
+              <div class="model-badge"><span class="status-dot"></span> Llama 3 — 8B</div>
+              <div class="model-stats">
+                <div class="model-stat"><span>Inference</span><strong>42ms</strong></div>
+                <div class="model-stat"><span>Temperature</span><strong>0.7</strong></div>
+                <div class="model-stat"><span>Context</span><strong>8K</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Center: Chat area -->
+          <div class="ai-chat-main card">
+            <div class="ai-chat-header">
+              <div><h3>Network Diagnostics</h3><span class="text-muted">Active session · Llama 3 inference</span></div>
+              <div class="ai-chat-actions">
+                <button class="card-action-btn" title="Export Chat">↓</button>
+                <button class="card-action-btn" title="Clear Chat">🗑</button>
+              </div>
+            </div>
+            <div class="ai-chat-body" id="ai-chat-body"></div>
+            <div class="ai-suggested-queries" id="ai-suggested">
+              <span class="suggested-label">Suggested:</span>
+              <button class="suggested-btn" data-query="Why is Delhi slow?">Why is Delhi slow?</button>
+              <button class="suggested-btn" data-query="Show critical routers">Show critical routers</button>
+              <button class="suggested-btn" data-query="Predict failures for next hour">Predict failures next hour</button>
+              <button class="suggested-btn" data-query="Explain BGP">Explain BGP</button>
+            </div>
+            <div class="ai-chat-input-area">
+              <button class="btn-icon voice-btn" title="Voice Input (Offline)">🎤</button>
+              <input type="text" id="ai-chat-input" class="chat-input" placeholder="Ask anything about your network..." />
+              <button class="chat-send-btn" id="ai-chat-send" title="Send">➤</button>
+            </div>
+          </div>
+
+          <!-- Right: Knowledge base -->
+          <div class="ai-knowledge card">
+            <div class="ai-kb-header"><h3>Knowledge Base</h3><span class="text-muted">Offline · Local RAG</span></div>
+            <input type="text" class="search-input kb-search" placeholder="Search documentation..." />
+            <div class="kb-topics">
+              <div class="kb-topic"><span class="kb-icon">📘</span><span>BGP Routing Protocol</span></div>
+              <div class="kb-topic"><span class="kb-icon">📘</span><span>OSPF Configuration</span></div>
+              <div class="kb-topic"><span class="kb-icon">📘</span><span>SNMP v3 Setup</span></div>
+              <div class="kb-topic"><span class="kb-icon">📘</span><span>Firewall Rule Best Practices</span></div>
+              <div class="kb-topic"><span class="kb-icon">📘</span><span>VLAN Trunking</span></div>
+              <div class="kb-topic"><span class="kb-icon">📘</span><span>QoS Traffic Shaping</span></div>
+              <div class="kb-topic"><span class="kb-icon">📘</span><span>Network Redundancy — HSRP/VRRP</span></div>
+              <div class="kb-topic"><span class="kb-icon">📘</span><span>IPSec VPN Tunnels</span></div>
+              <div class="kb-topic"><span class="kb-icon">📘</span><span>Satellite Link Protocols</span></div>
+              <div class="kb-topic"><span class="kb-icon">📘</span><span>ISRO Network Architecture</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- VIEW 4: INCIDENTS                     -->
+      <!-- ══════════════════════════════════════ -->
+      <section class="view" id="view-incidents">
+        <div class="page-content">
+          <!-- Summary Cards -->
+          <div class="incident-summary-row">
+            <div class="summary-card"><div class="summary-value" style="color:var(--text-heading)">47</div><div class="summary-label">Total Incidents</div><div class="summary-sub">Last 24 hours</div></div>
+            <div class="summary-card border-red"><div class="summary-value" style="color:var(--magenta)">5</div><div class="summary-label">Critical</div><div class="summary-sub">Requires attention</div></div>
+            <div class="summary-card border-amber"><div class="summary-value" style="color:var(--amber)">12</div><div class="summary-label">Warning</div><div class="summary-sub">Under monitoring</div></div>
+            <div class="summary-card border-green"><div class="summary-value" style="color:var(--green)">30</div><div class="summary-label">Resolved</div><div class="summary-sub">Auto + manual</div></div>
+            <div class="summary-card border-cyan"><div class="summary-value" style="color:var(--cyan)">12<span style="font-size:14px">min</span></div><div class="summary-label">Avg MTTR</div><div class="summary-sub">↓ 8min from last week</div></div>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="page-toolbar">
+            <div class="toolbar-left">
+              <div class="filter-pills">
+                <button class="filter-pill active" data-severity="all">All</button>
+                <button class="filter-pill" data-severity="critical">🔴 Critical</button>
+                <button class="filter-pill" data-severity="warning">🟡 Warning</button>
+                <button class="filter-pill" data-severity="info">🔵 Info</button>
+                <button class="filter-pill" data-severity="resolved">🟢 Resolved</button>
+              </div>
+            </div>
+            <div class="toolbar-right">
+              <div class="search-box"><span class="search-icon">🔍</span><input type="text" class="search-input" placeholder="Search incidents..." /></div>
+            </div>
+          </div>
+
+          <!-- Incidents Grid -->
+          <div class="incidents-layout">
+            <div class="incidents-list-col">
+              <div class="incidents-list" id="incidents-full-list"></div>
+            </div>
+            <div class="incidents-analytics-col">
+              <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">📊</span>Incident Trends (7 Days)</div></div><div class="card-body"><div class="chart-container" style="height:180px"><canvas id="chart-incident-trends"></canvas></div></div></div>
+              <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">⏱️</span>Resolution Performance</div></div><div class="card-body"><div class="resolution-stats"><div class="res-stat"><span class="res-value" style="color:var(--cyan)">12m</span><span class="res-label">Avg MTTR</span></div><div class="res-stat"><span class="res-value" style="color:var(--green)">94%</span><span class="res-label">Auto-Resolved</span></div><div class="res-stat"><span class="res-value" style="color:var(--amber)">8m</span><span class="res-label">Detection Time</span></div><div class="res-stat"><span class="res-value" style="color:var(--magenta)">3</span><span class="res-label">Escalated</span></div></div></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- VIEW 5: PREDICTIONS                   -->
+      <!-- ══════════════════════════════════════ -->
+      <section class="view" id="view-predictions">
+        <div class="page-content">
+          <!-- Model Performance Cards -->
+          <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+            <div class="kpi-card accent-cyan"><div class="kpi-top"><span class="kpi-label">Precision</span><div class="kpi-icon">🎯</div></div><div class="kpi-value">94.7<span style="font-size:14px;color:var(--cyan)">%</span></div><div class="kpi-sub"><span class="kpi-trend up">↑ 2.1%</span><span>vs last month</span></div></div>
+            <div class="kpi-card accent-green"><div class="kpi-top"><span class="kpi-label">Recall</span><div class="kpi-icon">📡</div></div><div class="kpi-value">91.3<span style="font-size:14px;color:var(--green)">%</span></div><div class="kpi-sub"><span class="kpi-trend up">↑ 1.8%</span><span>improvement</span></div></div>
+            <div class="kpi-card accent-amber"><div class="kpi-top"><span class="kpi-label">F1 Score</span><div class="kpi-icon">⚡</div></div><div class="kpi-value">92.9<span style="font-size:14px;color:var(--amber)">%</span></div><div class="kpi-sub"><span>harmonic mean</span></div></div>
+            <div class="kpi-card accent-purple"><div class="kpi-top"><span class="kpi-label">Avg Lead Time</span><div class="kpi-icon">⏱️</div></div><div class="kpi-value">22<span style="font-size:14px;color:var(--text-muted)">min</span></div><div class="kpi-sub"><span>before failure</span></div></div>
+          </div>
+
+          <!-- Predictions layout -->
+          <div class="predictions-layout">
+            <!-- Active Predictions -->
+            <div class="card" style="grid-column:1/2">
+              <div class="card-header"><div class="card-title"><span class="title-icon">🔮</span>Active Predictions</div></div>
+              <div class="card-body"><div class="prediction-list" id="pred-full-list" style="max-height:500px"></div></div>
+            </div>
+
+            <!-- Risk Heatmap -->
+            <div class="card" style="grid-column:2/3">
+              <div class="card-header"><div class="card-title"><span class="title-icon">🗺️</span>Device Risk Heatmap</div></div>
+              <div class="card-body"><div class="risk-heatmap" id="risk-heatmap"></div></div>
+            </div>
+          </div>
+
+          <!-- Forecast + Accuracy -->
+          <div class="predictions-bottom-row">
+            <div class="card">
+              <div class="card-header"><div class="card-title"><span class="title-icon">📈</span>Prediction Accuracy — Last 30 Days</div></div>
+              <div class="card-body"><div class="chart-container" style="height:220px"><canvas id="chart-pred-accuracy"></canvas></div></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title"><span class="title-icon">⏳</span>24-Hour Forecast Timeline</div></div>
+              <div class="card-body"><div class="forecast-timeline" id="forecast-timeline"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- VIEW 6: TELEMETRY                     -->
+      <!-- ══════════════════════════════════════ -->
+      <section class="view" id="view-telemetry">
+        <div class="page-content">
+          <!-- Controls -->
+          <div class="page-toolbar">
+            <div class="toolbar-left">
+              <div class="select-wrapper">
+                <select id="telemetry-device" class="styled-select">
+                  <option value="all">All Devices (Aggregate)</option>
+                  <option value="r12">R12 — Delhi-DC</option>
+                  <option value="fw03">FW03 — Sriharikota</option>
+                  <option value="s07">S07 — Mumbai-DC</option>
+                  <option value="lb02">LB-02 — Ahmedabad-SAC</option>
+                  <option value="srv22">SRV-22 — Bangalore-HQ</option>
+                  <option value="ap14">AP-14 — Chennai-SAT</option>
+                </select>
+              </div>
+            </div>
+            <div class="toolbar-right">
+              <div class="time-range-pills">
+                <button class="filter-pill" data-range="1h">1H</button>
+                <button class="filter-pill active" data-range="6h">6H</button>
+                <button class="filter-pill" data-range="24h">24H</button>
+                <button class="filter-pill" data-range="7d">7D</button>
+                <button class="filter-pill" data-range="30d">30D</button>
+              </div>
+              <button class="btn-secondary" id="telemetry-export">↓ Export</button>
+            </div>
+          </div>
+
+          <!-- Telemetry Charts -->
+          <div class="telemetry-grid">
+            <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">🔥</span>CPU Usage</div><div class="metric-live"><span class="live-value" id="telem-cpu-val">72.4%</span></div></div><div class="card-body"><div class="chart-container" style="height:240px"><canvas id="telem-cpu"></canvas></div></div></div>
+            <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">🧠</span>Memory Utilization</div><div class="metric-live"><span class="live-value" id="telem-mem-val">68.1%</span></div></div><div class="card-body"><div class="chart-container" style="height:240px"><canvas id="telem-mem"></canvas></div></div></div>
+            <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">💾</span>Disk I/O</div><div class="metric-live"><span class="live-value" id="telem-disk-val">245 MB/s</span></div></div><div class="card-body"><div class="chart-container" style="height:240px"><canvas id="telem-disk"></canvas></div></div></div>
+            <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">🌐</span>Network Throughput</div><div class="metric-live"><span class="live-value" id="telem-net-val">1.2 Gbps</span></div></div><div class="card-body"><div class="chart-container" style="height:240px"><canvas id="telem-net"></canvas></div></div></div>
+            <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">📡</span>Packet Loss</div><div class="metric-live"><span class="live-value" id="telem-pl-val">2.1%</span></div></div><div class="card-body"><div class="chart-container" style="height:240px"><canvas id="telem-pl"></canvas></div></div></div>
+            <div class="card"><div class="card-header"><div class="card-title"><span class="title-icon">⚡</span>Latency</div><div class="metric-live"><span class="live-value" id="telem-lat-val">23ms</span></div></div><div class="card-body"><div class="chart-container" style="height:240px"><canvas id="telem-lat"></canvas></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- VIEW 7: DEVICE RISK                   -->
+      <!-- ══════════════════════════════════════ -->
+      <section class="view" id="view-device-risk">
+        <div class="page-content">
+          <!-- Summary -->
+          <div class="incident-summary-row">
+            <div class="summary-card"><div class="summary-value" style="color:var(--text-heading)">350</div><div class="summary-label">Total Devices</div><div class="summary-sub">Across all locations</div></div>
+            <div class="summary-card border-red"><div class="summary-value" style="color:var(--magenta)">4</div><div class="summary-label">Critical Risk</div><div class="summary-sub">Risk > 70%</div></div>
+            <div class="summary-card border-amber"><div class="summary-value" style="color:var(--amber)">8</div><div class="summary-label">Warning</div><div class="summary-sub">Risk 40–70%</div></div>
+            <div class="summary-card border-green"><div class="summary-value" style="color:var(--green)">338</div><div class="summary-label">Healthy</div><div class="summary-sub">Risk < 40%</div></div>
+            <div class="summary-card border-cyan"><div class="summary-value" style="color:var(--cyan)">18.4<span style="font-size:14px">%</span></div><div class="summary-label">Avg Risk Score</div><div class="summary-sub">↓ 3.2% from last week</div></div>
+          </div>
+          <!-- Toolbar -->
+          <div class="page-toolbar">
+            <div class="toolbar-left">
+              <div class="search-box"><span class="search-icon">🔍</span><input type="text" class="search-input" id="device-search" placeholder="Search devices..." /></div>
+              <div class="filter-pills">
+                <button class="filter-pill active" data-dstatus="all">All</button>
+                <button class="filter-pill" data-dstatus="critical">Critical</button>
+                <button class="filter-pill" data-dstatus="warning">Warning</button>
+                <button class="filter-pill" data-dstatus="healthy">Healthy</button>
+              </div>
+            </div>
+            <div class="toolbar-right">
+              <div class="select-wrapper"><select class="styled-select" id="device-sort"><option value="risk-desc">Risk: High → Low</option><option value="risk-asc">Risk: Low → High</option><option value="name">Name: A → Z</option><option value="location">Location</option></select></div>
+            </div>
+          </div>
+          <!-- Device Cards Grid -->
+          <div class="device-cards-grid" id="device-cards-grid"></div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- VIEW 8: DIGITAL TWIN                  -->
+      <!-- ══════════════════════════════════════ -->
+      <section class="view" id="view-digital-twin">
+        <div class="page-content">
+          <div class="dt-layout">
+            <!-- Simulation Canvas -->
+            <div class="dt-canvas-area card">
+              <div class="card-header">
+                <div class="card-title"><span class="title-icon">🧬</span>Digital Twin — Network Simulation<span class="sim-status-badge" id="sim-status">READY</span></div>
+                <div class="card-actions">
+                  <button class="btn-primary" id="sim-start">▶ Run Simulation</button>
+                  <button class="btn-secondary" id="sim-reset">↻ Reset</button>
+                </div>
+              </div>
+              <div class="card-body"><div class="topology-container" style="height:450px"><canvas id="dt-canvas"></canvas></div></div>
+            </div>
+
+            <!-- Simulation Controls -->
+            <div class="dt-controls">
+              <div class="card">
+                <div class="card-header"><div class="card-title"><span class="title-icon">🎛️</span>Scenario Controls</div></div>
+                <div class="card-body">
+                  <div class="scenario-list">
+                    <button class="scenario-btn" data-scenario="node-fail"><span>💥</span>Simulate Node Failure</button>
+                    <button class="scenario-btn" data-scenario="traffic-surge"><span>📈</span>Traffic Surge (10x)</button>
+                    <button class="scenario-btn" data-scenario="link-cut"><span>✂️</span>Link Failure</button>
+                    <button class="scenario-btn" data-scenario="ddos"><span>🛡️</span>DDoS Attack</button>
+                    <button class="scenario-btn" data-scenario="cascade"><span>⚡</span>Cascade Failure</button>
+                  </div>
+                  <div class="scenario-target">
+                    <label class="form-label">Target Device</label>
+                    <select class="styled-select" id="sim-target">
+                      <option value="r12">R12 — Delhi-DC</option>
+                      <option value="fw03">FW03 — Sriharikota</option>
+                      <option value="s07">S07 — Mumbai-DC</option>
+                      <option value="bangalore">Bangalore-HQ</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Impact Analysis -->
+              <div class="card">
+                <div class="card-header"><div class="card-title"><span class="title-icon">📊</span>Impact Analysis</div></div>
+                <div class="card-body">
+                  <div class="impact-metrics" id="impact-metrics">
+                    <div class="impact-item"><span class="impact-label">Affected Nodes</span><span class="impact-value" id="impact-nodes">—</span></div>
+                    <div class="impact-item"><span class="impact-label">Traffic Rerouted</span><span class="impact-value" id="impact-traffic">—</span></div>
+                    <div class="impact-item"><span class="impact-label">Latency Impact</span><span class="impact-value" id="impact-latency">—</span></div>
+                    <div class="impact-item"><span class="impact-label">Availability</span><span class="impact-value" id="impact-avail">—</span></div>
+                    <div class="impact-item"><span class="impact-label">Recovery ETA</span><span class="impact-value" id="impact-recovery">—</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sim Log -->
+              <div class="card">
+                <div class="card-header"><div class="card-title"><span class="title-icon">📝</span>Simulation Log</div></div>
+                <div class="card-body"><div class="sim-log" id="sim-log"><div class="sim-log-entry">System ready for simulation.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- VIEW 9: REPORTS                       -->
+      <!-- ══════════════════════════════════════ -->
+      <section class="view" id="view-reports">
+        <div class="page-content">
+          <!-- Report Templates -->
+          <div class="section-heading"><h2>Report Templates</h2><span class="text-muted">Auto-generated reports powered by offline LLM</span></div>
+          <div class="report-templates-grid">
+            <div class="report-template-card" data-report="daily">
+              <div class="report-icon" style="background:var(--cyan-dim);color:var(--cyan)">📊</div>
+              <h3>Daily Health Summary</h3>
+              <p>Comprehensive overview of network health, active alerts, and device status for the past 24 hours.</p>
+              <div class="report-meta"><span>Last generated: 2h ago</span></div>
+              <button class="btn-primary">Generate Report</button>
+            </div>
+            <div class="report-template-card" data-report="incident">
+              <div class="report-icon" style="background:var(--magenta-dim);color:var(--magenta)">⚠️</div>
+              <h3>Incident Report</h3>
+              <p>Detailed root-cause analysis, timeline, affected systems, and remediation for specific incidents.</p>
+              <div class="report-meta"><span>Last generated: 5h ago</span></div>
+              <button class="btn-primary">Generate Report</button>
+            </div>
+            <div class="report-template-card" data-report="risk">
+              <div class="report-icon" style="background:var(--amber-dim);color:var(--amber)">🛡️</div>
+              <h3>Risk Assessment</h3>
+              <p>Per-device risk scoring, vulnerability analysis, and prioritized remediation recommendations.</p>
+              <div class="report-meta"><span>Last generated: 1d ago</span></div>
+              <button class="btn-primary">Generate Report</button>
+            </div>
+            <div class="report-template-card" data-report="capacity">
+              <div class="report-icon" style="background:var(--green-dim);color:var(--green)">📈</div>
+              <h3>Capacity Planning</h3>
+              <p>Trend analysis, resource utilization forecasts, and infrastructure scaling recommendations.</p>
+              <div class="report-meta"><span>Last generated: 3d ago</span></div>
+              <button class="btn-primary">Generate Report</button>
+            </div>
+          </div>
+
+          <!-- Recent Reports -->
+          <div class="section-heading" style="margin-top:28px"><h2>Recent Reports</h2></div>
+          <div class="card">
+            <div class="card-body">
+              <table class="risk-table">
+                <thead><tr><th>Report Name</th><th>Type</th><th>Generated</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="reports-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- VIEW 10: SETTINGS                     -->
+      <!-- ══════════════════════════════════════ -->
+      <section class="view" id="view-settings">
+        <div class="page-content">
+          <div class="settings-layout">
+            <!-- Settings Sidebar -->
+            <div class="settings-nav">
+              <a class="settings-nav-item active" data-section="general"><span>⚙️</span>General</a>
+              <a class="settings-nav-item" data-section="ai-model"><span>🤖</span>AI Model</a>
+              <a class="settings-nav-item" data-section="alerts"><span>🔔</span>Alert Thresholds</a>
+              <a class="settings-nav-item" data-section="network"><span>🌐</span>Network</a>
+              <a class="settings-nav-item" data-section="display"><span>🎨</span>Display</a>
+              <a class="settings-nav-item" data-section="security"><span>🔒</span>Security</a>
+              <a class="settings-nav-item" data-section="about"><span>ℹ️</span>About</a>
+            </div>
+
+            <!-- Settings Content -->
+            <div class="settings-content card">
+              <div class="settings-section active" id="settings-general">
+                <h2>General Settings</h2>
+                <p class="text-muted">Configure system-wide preferences for the NetSage AI platform.</p>
+                <div class="settings-group">
+                  <div class="setting-row"><div class="setting-info"><label>System Name</label><span class="text-muted">Display name for this NetSage AI instance</span></div><input type="text" class="settings-input" value="ISRO-NETSAGE-PRIMARY" /></div>
+                  <div class="setting-row"><div class="setting-info"><label>Location</label><span class="text-muted">Primary deployment location</span></div><input type="text" class="settings-input" value="Bangalore-HQ, ISRO Campus" /></div>
+                  <div class="setting-row"><div class="setting-info"><label>Data Refresh Interval</label><span class="text-muted">How often telemetry data is refreshed</span></div><select class="styled-select"><option>3 seconds</option><option selected>5 seconds</option><option>10 seconds</option><option>30 seconds</option></select></div>
+                  <div class="setting-row"><div class="setting-info"><label>Dashboard Auto-Refresh</label><span class="text-muted">Automatically refresh dashboard data</span></div><label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label></div>
+                  <div class="setting-row"><div class="setting-info"><label>Enable Notifications</label><span class="text-muted">Show desktop notifications for critical alerts</span></div><label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label></div>
+                </div>
+              </div>
+
+              <div class="settings-section" id="settings-ai-model">
+                <h2>AI Model Configuration</h2>
+                <p class="text-muted">Configure the on-premise LLM and AI prediction models.</p>
+                <div class="settings-group">
+                  <div class="setting-row"><div class="setting-info"><label>LLM Model</label><span class="text-muted">Primary language model for AI assistant</span></div><select class="styled-select"><option selected>Llama 3 — 8B (Ollama)</option><option>Mistral 7B (Ollama)</option><option>Llama 3 — 70B (vLLM)</option></select></div>
+                  <div class="setting-row"><div class="setting-info"><label>Inference Server</label><span class="text-muted">Local inference endpoint</span></div><div class="setting-value-with-status"><input type="text" class="settings-input" value="http://localhost:11434" /><span class="status-badge healthy"><span class="status-badge-dot"></span>Connected</span></div></div>
+                  <div class="setting-row"><div class="setting-info"><label>Temperature</label><span class="text-muted">Controls randomness (0.0 = deterministic)</span></div><div class="slider-container"><input type="range" class="styled-range" min="0" max="100" value="70" /><span class="range-value">0.7</span></div></div>
+                  <div class="setting-row"><div class="setting-info"><label>Max Tokens</label><span class="text-muted">Maximum response length</span></div><select class="styled-select"><option>1024</option><option selected>2048</option><option>4096</option><option>8192</option></select></div>
+                  <div class="setting-row"><div class="setting-info"><label>Prediction Model</label><span class="text-muted">Time-series forecasting model</span></div><select class="styled-select"><option selected>LSTM + Prophet Ensemble</option><option>LSTM Only</option><option>Prophet Only</option><option>Isolation Forest</option></select></div>
+                  <div class="setting-row"><div class="setting-info"><label>Anomaly Sensitivity</label><span class="text-muted">Detection threshold for anomaly flagging</span></div><div class="slider-container"><input type="range" class="styled-range" min="0" max="100" value="75" /><span class="range-value">0.75</span></div></div>
+                </div>
+              </div>
+
+              <div class="settings-section" id="settings-alerts">
+                <h2>Alert Thresholds</h2>
+                <p class="text-muted">Set threshold values that trigger critical, warning, and informational alerts.</p>
+                <div class="settings-group">
+                  <div class="setting-row"><div class="setting-info"><label>CPU Critical Threshold</label><span class="text-muted">Alert when CPU exceeds this value</span></div><div class="slider-container"><input type="range" class="styled-range" min="50" max="100" value="90" /><span class="range-value">90%</span></div></div>
+                  <div class="setting-row"><div class="setting-info"><label>Memory Critical Threshold</label><span class="text-muted">Alert when memory exceeds this value</span></div><div class="slider-container"><input type="range" class="styled-range" min="50" max="100" value="85" /><span class="range-value">85%</span></div></div>
+                  <div class="setting-row"><div class="setting-info"><label>Packet Loss Warning</label><span class="text-muted">Warn when packet loss exceeds this rate</span></div><div class="slider-container"><input type="range" class="styled-range" min="0" max="30" value="5" /><span class="range-value">5%</span></div></div>
+                  <div class="setting-row"><div class="setting-info"><label>Latency Warning</label><span class="text-muted">Warn when avg latency exceeds this</span></div><div class="slider-container"><input type="range" class="styled-range" min="10" max="200" value="50" /><span class="range-value">50ms</span></div></div>
+                  <div class="setting-row"><div class="setting-info"><label>Risk Score Alert</label><span class="text-muted">Alert when device risk score exceeds</span></div><div class="slider-container"><input type="range" class="styled-range" min="30" max="100" value="70" /><span class="range-value">70%</span></div></div>
+                </div>
+              </div>
+
+              <div class="settings-section" id="settings-network">
+                <h2>Network Configuration</h2>
+                <p class="text-muted">Configure network monitoring and data collection settings.</p>
+                <div class="settings-group">
+                  <div class="setting-row"><div class="setting-info"><label>SNMP Version</label><span class="text-muted">Protocol version for device polling</span></div><select class="styled-select"><option>SNMPv2c</option><option selected>SNMPv3</option></select></div>
+                  <div class="setting-row"><div class="setting-info"><label>Polling Interval</label><span class="text-muted">Device telemetry collection frequency</span></div><select class="styled-select"><option>10 seconds</option><option selected>30 seconds</option><option>60 seconds</option><option>5 minutes</option></select></div>
+                  <div class="setting-row"><div class="setting-info"><label>Monitored Subnets</label><span class="text-muted">Network ranges being monitored</span></div><textarea class="settings-textarea" rows="3">10.0.0.0/8
+172.16.0.0/12
+192.168.0.0/16</textarea></div>
+                  <div class="setting-row"><div class="setting-info"><label>NetFlow Collection</label><span class="text-muted">Enable NetFlow/sFlow data collection</span></div><label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label></div>
+                </div>
+              </div>
+
+              <div class="settings-section" id="settings-display">
+                <h2>Display Settings</h2>
+                <p class="text-muted">Customize the visual appearance of the dashboard.</p>
+                <div class="settings-group">
+                  <div class="setting-row"><div class="setting-info"><label>Theme</label><span class="text-muted">Dashboard visual theme</span></div><select class="styled-select"><option selected>Deep Navy (Default)</option><option>Midnight Black</option><option>Space Gray</option></select></div>
+                  <div class="setting-row"><div class="setting-info"><label>Chart Animations</label><span class="text-muted">Enable smooth chart transitions</span></div><label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label></div>
+                  <div class="setting-row"><div class="setting-info"><label>Topology Particles</label><span class="text-muted">Show animated data flow particles</span></div><label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label></div>
+                  <div class="setting-row"><div class="setting-info"><label>Compact Mode</label><span class="text-muted">Reduce spacing for more data density</span></div><label class="toggle-switch"><input type="checkbox" /><span class="toggle-slider"></span></label></div>
+                </div>
+              </div>
+
+              <div class="settings-section" id="settings-security">
+                <h2>Security</h2>
+                <p class="text-muted">Air-gap security and data retention configuration.</p>
+                <div class="settings-group">
+                  <div class="setting-row"><div class="setting-info"><label>Air-Gap Mode</label><span class="text-muted">Enforce zero outbound network connections</span></div><div style="display:flex;align-items:center;gap:10px"><label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label><span class="status-badge healthy"><span class="status-badge-dot"></span>Active</span></div></div>
+                  <div class="setting-row"><div class="setting-info"><label>Data Retention</label><span class="text-muted">How long telemetry data is stored</span></div><select class="styled-select"><option>30 days</option><option selected>90 days</option><option>180 days</option><option>1 year</option></select></div>
+                  <div class="setting-row"><div class="setting-info"><label>Audit Logging</label><span class="text-muted">Log all user actions and system events</span></div><label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label></div>
+                  <div class="setting-row"><div class="setting-info"><label>Encryption at Rest</label><span class="text-muted">AES-256 encryption for stored data</span></div><div style="display:flex;align-items:center;gap:10px"><label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label><span class="status-badge healthy"><span class="status-badge-dot"></span>Enabled</span></div></div>
+                </div>
+              </div>
+
+              <div class="settings-section" id="settings-about">
+                <h2>About NetSage AI</h2>
+                <div class="about-hero">
+                  <div class="about-logo"><div class="brand-icon" style="width:64px;height:64px;font-size:28px;border-radius:16px">N</div></div>
+                  <div class="about-info">
+                    <h1 style="font-family:'Outfit',sans-serif;font-size:28px;margin-bottom:4px">NETSAGE AI</h1>
+                    <p class="text-muted">Predictive, Offline-First Network Intelligence for Mission-Critical Infrastructure</p>
+                  </div>
+                </div>
+                <div class="about-details">
+                  <div class="about-row"><span>Version</span><strong>2.1.0-alpha</strong></div>
+                  <div class="about-row"><span>Build</span><strong>2026.07.01-4a8c2f</strong></div>
+                  <div class="about-row"><span>AI Engine</span><strong>LSTM + Prophet + Isolation Forest</strong></div>
+                  <div class="about-row"><span>LLM Runtime</span><strong>Ollama v0.3.x (Llama 3)</strong></div>
+                  <div class="about-row"><span>Backend</span><strong>FastAPI + TimescaleDB</strong></div>
+                  <div class="about-row"><span>Deployment</span><strong>Docker + Kubernetes (Air-Gapped)</strong></div>
+                  <div class="about-row"><span>Hackathon</span><strong>Bhartiya Antariksh Hackathon 2026</strong></div>
+                  <div class="about-row"><span>Team</span><strong>NETSAGE_LEADER (H2S_COORDINATOR)</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /view-container -->
+  </main>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip-custom" id="tooltip"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-content" id="modal-content"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
